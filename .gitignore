@@ -30,3 +30,15 @@
 *.exe
 *.out
 *.app
+
+Debug
+Release
+x64
+*.suo
+*.opensdf
+*.pdb
+*.exe
+*.sdf
+*.ilk
+*.exp
+*.zip
