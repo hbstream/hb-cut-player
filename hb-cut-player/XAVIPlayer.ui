@@ -223,9 +223,9 @@ QToolTip {
     <item>
      <widget class="QFrame" name="playerCard">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
-        <verstretch>2</verstretch>
+        <verstretch>10</verstretch>
        </sizepolicy>
       </property>
       <property name="frameShape">
@@ -524,10 +524,13 @@ QToolTip {
     <item>
      <widget class="QFrame" name="workCard">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
         <horstretch>0</horstretch>
-        <verstretch>1</verstretch>
+        <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size><width>16777215</width><height>180</height></size>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -596,10 +599,11 @@ QToolTip {
           </layout>
          </item>
          <item>
-          <spacer name="cutFormSpacer">
+          <spacer name="cutFormBottomSpacer">
            <property name="orientation"><enum>Qt::Vertical</enum></property>
+           <property name="sizeType"><enum>QSizePolicy::Expanding</enum></property>
            <property name="sizeHint" stdset="0">
-            <size><width>20</width><height>1</height></size>
+            <size><width>20</width><height>0</height></size>
            </property>
           </spacer>
          </item>
@@ -616,6 +620,12 @@ QToolTip {
            <property name="text">
             <string>开始剪切</string>
            </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>1</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size><width>110</width><height>0</height></size>
            </property>
@@ -629,25 +639,23 @@ QToolTip {
            <property name="text">
             <string>开始合并</string>
            </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>1</verstretch>
+            </sizepolicy>
+           </property>
            <property name="toolTip">
             <string>把已经剪好的片段按列表顺序合并成 &lt;源文件名&gt;_new.mp4</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <spacer name="cutActionSpacer">
-           <property name="orientation"><enum>Qt::Vertical</enum></property>
-           <property name="sizeHint" stdset="0">
-            <size><width>20</width><height>1</height></size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
        <item>
         <widget class="QTableWidget" name="tableCutTask">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>1</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
