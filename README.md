@@ -1,38 +1,62 @@
-# [开源]基于ffmpeg和libvlc的视频剪辑、播放器
+# [开源] 基于 FFmpeg 和 libVLC 的视频剪辑 / 播放器
 
-> 以前研究的时候，写过一个简单的基于VLC的视频播放器。后来因为各种项目，有时为了方便测试，等各种原因，陆续加了一些功能，现在集成了视频播放、视频加减速、视频剪切，视频合并（增加中）等功能在一起。有时候看点网上下载的视频，可以一边看，一边能处理视频前后的广告，感觉也还可以用，就想把它开源出去，一方面希望有需要的朋友可以参考、借鉴，另一方面也希望可以促进它进一步的丰富功能，最终能实现一款简单又够用的视频剪辑软件。
+> 早年研究的时候写过一个简单的基于 VLC 的视频播放器；后来配合各种项目陆续加了一些功能 —— 视频播放、加 / 减速、剪切、合并（开发中）等等。
+> 一边看下载下来的视频一边把片头片尾的广告剪掉，确实挺顺手，于是把它开源出来：一方面给有需要的朋友做参考，另一方面也希望随着开源完善，能逐渐变成一个简单又够用的视频剪辑工具。
 
-## 程序框架
-先上一张程序截图
+## 程序界面
+
+> 旧版（VS2013 + Qt 5）
 
 ![](imgs/HBCutPlayer1.jpg)
 
-基本上讲，它的播放功能是基于VLC，剪辑功能是基于FFmpeg，现在的功能还比较简单，当然我的目的也不是想做一个复杂的视频编辑器，那是专业软件的事情，就是想做一个简单又好用的剪辑工具即可。整体框架如下图所示：
+> 新版（Qt 6.10 + CMake 现代化重做）
+
+![](imgs/HBCutPlayer-modern.png)
+
+整体框架沿用：播放走 libVLC，剪切走 FFmpeg。
 
 ![](imgs/HBCutPlayer2.jpg)
 
+## 构建（Windows / 64 位）
 
-## 源码简介
+### 依赖
 
-### 工程
+- Visual Studio 2022（或更新的 MSVC 工具链）
+- Qt 6.10.x，msvc2022_64 套件，默认查找 `C:/Qt/6.10.3/msvc2022_64`
+- VLC 3.x 64 位桌面版，安装在默认位置 `C:/Program Files/VideoLAN/VLC`
+- CMake 3.21+
 
-程序目前使用VS2013开发，并通过Qt VS Addin创建QT工程，界面基于QT5来编写。将来准备改为QtCreator工程，目的是为了方便移植到linux平台。
+### 步骤
 
-主要逻辑是：QT绘制界面，跟用户交互，通过调用libvlc，实现本地文件播放。在适当的地方设置剪辑参数，然后通过FFMPEG实现视频文件剪辑，完成后，反馈到QT界面。
+```powershell
+# 1) 从系统 VLC 现场生成 64 位导入库（首次构建必须执行）
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gen_vlc_import_libs.ps1
 
-和普通播放器类似，程序支持左"<-",右"->"快捷键来做视频的快进后退，也可配合Ctrl和Shift键来做。
+# 2) 配置 + 编译
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1
+```
 
-### 代码目录
+构建产物在 `build/Release/`，已经通过 `windeployqt` 把 Qt 运行时与 VLC 插件目录一起部署进去，可以直接双击 `hb-cut-player.exe` 运行。
 
-![](imgs/HBCutPlayer3.jpg)
+> 仓库里 `hb-cut-player/vlc/` 下自带的 32 位 `.lib` 是历史 Qt 5 + VS2013 32 位工程留下的，新构建不会再用到，保留只是为了让旧工程也能打开。
+
+### 老 VS2013 工程
+
+仓库里仍然保留了 `hb-cut-player.sln` / `hb-cut-player.vcxproj`，作为存档；当前推荐的构建路径是 CMake。
+
+## 操作
+
+- 拖放视频文件到窗口即可播放
+- 空格 = 播放 / 暂停；← / → = ±5s，Ctrl ±30s，Shift ±60s
+- 双击视频区域全屏 / 退出全屏；Esc 退出全屏
+- 剪切：在“剪切”页设定开始 / 结束时间和输出文件名，添加任务后点“开始剪切”
 
 ## 开发计划
 
-* 开发工具由VS2013切换为QtCreator
-* 文件播放部分，由目前的调用libvlc，改为通过FFMPEG解码后，渲染播放。
-* 剪辑操作，由进程调用FFMPEG程序，改为通过FFMPEG API方式
-* 增加视频文件合并，以及格式转换
-* 界面改善
+- 把 ffmpeg 进程调用改为 ffmpeg API
+- 实现“合并”页
+- 视频解码改走 ffmpeg + 自渲染，避免依赖系统 VLC
+- 跨平台支持
 
 ## 源码地址
 
@@ -40,6 +64,6 @@ https://github.com/hbstream/hb-cut-player
 
 ---
 
-  ![](imgs/hbstream.jpg) **合作请联系QQ。（转载请注明作者和出处~）**
+![](imgs/hbstream.jpg) **合作请联系 QQ。（转载请注明作者和出处）**
 
 ---
