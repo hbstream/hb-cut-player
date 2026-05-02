@@ -1,4 +1,14 @@
 <RCC>
-    <qresource prefix="XAVIPlayer">
+    <qresource prefix="/icons">
+        <file alias="app.svg">Resources/icons/app.svg</file>
+        <file alias="open.svg">Resources/icons/open.svg</file>
+        <file alias="play.svg">Resources/icons/play.svg</file>
+        <file alias="pause.svg">Resources/icons/pause.svg</file>
+        <file alias="stop.svg">Resources/icons/stop.svg</file>
+        <file alias="skip-back.svg">Resources/icons/skip-back.svg</file>
+        <file alias="skip-back-2.svg">Resources/icons/skip-back-2.svg</file>
+        <file alias="skip-fwd.svg">Resources/icons/skip-fwd.svg</file>
+        <file alias="skip-fwd-2.svg">Resources/icons/skip-fwd-2.svg</file>
+        <file alias="reset.svg">Resources/icons/reset.svg</file>
     </qresource>
 </RCC>

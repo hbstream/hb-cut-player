@@ -178,6 +178,15 @@ QHeaderView::section {
     border: none;
     border-right: 1px solid #1c1f24;
 }
+
+QToolTip {
+    background-color: #2b303a;
+    color: #f0f0f0;
+    border: 1px solid #1f6feb;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 9pt;
+}
 </string>
   </property>
   <widget class="QWidget" name="centralWidget">

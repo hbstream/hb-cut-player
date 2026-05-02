@@ -20,6 +20,8 @@
 #include <QUrl>
 #include <QCursor>
 #include <QApplication>
+#include <QIcon>
+#include <QSize>
 
 #include <Urlmon.h>
 #pragma comment(lib, "Urlmon.lib")
@@ -54,6 +56,26 @@ XAVIPlayer::XAVIPlayer(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
+
+    // 应用窗口图标 + 用 SVG 资源替换播放控制按钮上的文字符号，
+    // 避免 emoji 字体回退导致的“卡通”观感。
+    setWindowIcon(QIcon(QStringLiteral(":/icons/app.svg")));
+
+    auto applyIcon = [](QPushButton* btn, const QString& path) {
+        btn->setIcon(QIcon(path));
+        btn->setIconSize(QSize(20, 20));
+        btn->setText(QString());
+    };
+    applyIcon(ui.btnOpen,        QStringLiteral(":/icons/open.svg"));
+    applyIcon(ui.btnStart,       QStringLiteral(":/icons/play.svg"));
+    applyIcon(ui.btnStop,        QStringLiteral(":/icons/stop.svg"));
+    applyIcon(ui.btnDec10,       QStringLiteral(":/icons/skip-back-2.svg"));
+    applyIcon(ui.btnDecrease,    QStringLiteral(":/icons/skip-back.svg"));
+    applyIcon(ui.btnRateReset,   QStringLiteral(":/icons/reset.svg"));
+    applyIcon(ui.btnIncrease,    QStringLiteral(":/icons/skip-fwd.svg"));
+    applyIcon(ui.btnInc10,       QStringLiteral(":/icons/skip-fwd-2.svg"));
+    // 单独标记 btnStart：用于 onBtnStartClick 切换 play/pause 图标。
+    ui.btnStart->setProperty("isPlayingState", false);
 
     timer_ = new QTimer(this);
     connect(timer_, SIGNAL(timeout()), this, SLOT(onUpdateTimer()));
@@ -169,7 +191,8 @@ void XAVIPlayer::slotPlay(QString playName, int seekTime)
     ui.sliderVideo->setValue(0);
     ui.sliderVideo->setMaximum(duration);
 
-    ui.btnStart->setText(QStringLiteral("⏸"));
+    ui.btnStart->setIcon(QIcon(QStringLiteral(":/icons/pause.svg")));
+    ui.btnStart->setProperty("isPlayingState", true);
     setWindowTitle(QStringLiteral("HB Cut Player - ") + playing_fileinfo_.fileName());
 
     timer_->start();
@@ -200,16 +223,16 @@ void XAVIPlayer::onBtnOpenClick()
 
 void XAVIPlayer::onBtnStartClick()
 {
-    // 用 ▶ / ⏸ 字符表示当前按钮状态。
-    if (ui.btnStart->text() == QStringLiteral("▶"))
-    {
-        ui.btnStart->setText(QStringLiteral("⏸"));
+    // 用 isPlayingState 属性追踪按钮当前显示的是 play 还是 pause 图标。
+    const bool showingPause = ui.btnStart->property("isPlayingState").toBool();
+    if (!showingPause) {
+        ui.btnStart->setIcon(QIcon(QStringLiteral(":/icons/pause.svg")));
+        ui.btnStart->setProperty("isPlayingState", true);
         timer_->start();
         if (is_playing_) player_->Pause();
-    }
-    else
-    {
-        ui.btnStart->setText(QStringLiteral("▶"));
+    } else {
+        ui.btnStart->setIcon(QIcon(QStringLiteral(":/icons/play.svg")));
+        ui.btnStart->setProperty("isPlayingState", false);
         timer_->stop();
         player_->Pause();
     }
@@ -220,7 +243,8 @@ void XAVIPlayer::onBtnStopClick()
     player_->Stop();
     timer_->stop();
     is_playing_ = false;
-    ui.btnStart->setText(QStringLiteral("▶"));
+    ui.btnStart->setIcon(QIcon(QStringLiteral(":/icons/play.svg")));
+    ui.btnStart->setProperty("isPlayingState", false);
 }
 
 void XAVIPlayer::onAudioSliderMove(int v)
