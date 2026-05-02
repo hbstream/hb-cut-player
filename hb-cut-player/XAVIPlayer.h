@@ -12,6 +12,7 @@
 
 #include "file_cut_thread.h"
 
+class QProcess;
 class VLCPlayer;
 class VLCInstance;
 
@@ -55,11 +56,13 @@ private slots:
     void onClickBtnSetCutStop();
     void onClickBtnAddCutTask();
     void onClickBtnCut();
+    void onClickBtnMerge();
 
     void slotPlay(QString playName, int seekTime);
     void slotDClickVideo();
 
     void slotFileCutComplete(int jobId);
+    void slotMergeFinished(int exitCode);
 
 private:
     void SeekPlay(int seekTime);
@@ -102,6 +105,17 @@ private:
 
     std::map<int, FileCutThread*> cut_threads_;
     int                           cut_id_ = 0;
+
+    // 自动命名计数器：每打开一个新视频归零，每次"添加剪切任务"递增。
+    int task_counter_for_source_ = 0;
+
+    // 已经成功剪切完毕的输出文件，按完成顺序记录，供合并使用。
+    std::vector<std::string> completed_cut_files_;
+
+    // 合并子进程：持有所有权以便发出 finished 信号后清理。
+    QProcess*  merge_process_      = nullptr;
+    QString    merge_output_path_;
+    QString    merge_concat_list_path_;
 };
 
 #endif // XAVIPLAYER_H

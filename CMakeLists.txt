@@ -74,6 +74,16 @@ add_custom_command(TARGET hb-cut-player POST_BUILD
         "$<TARGET_FILE_DIR:hb-cut-player>/plugins"
 )
 
+# 部署原仓库自带的 ffmpeg / MediaInfo 工具集（剪切 / 合并依赖 ffmpeg.exe）。
+set(BUNDLED_TOOLS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Win32/Debug/tools)
+if(EXISTS ${BUNDLED_TOOLS_DIR})
+    add_custom_command(TARGET hb-cut-player POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${BUNDLED_TOOLS_DIR}"
+            "$<TARGET_FILE_DIR:hb-cut-player>/tools"
+    )
+endif()
+
 if(WIN32)
     find_program(QT_DEPLOY_EXECUTABLE windeployqt
         HINTS ${Qt6_DIR}/../../../bin)

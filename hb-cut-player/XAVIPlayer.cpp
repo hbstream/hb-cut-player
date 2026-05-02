@@ -22,6 +22,14 @@
 #include <QApplication>
 #include <QIcon>
 #include <QSize>
+#include <QProcess>
+#include <QFile>
+#include <QFileInfo>
+#include <QTextStream>
+#include <QStandardPaths>
+#include <QDateTime>
+#include <QStringConverter>
+#include <QCoreApplication>
 
 #include <Urlmon.h>
 #pragma comment(lib, "Urlmon.lib")
@@ -127,6 +135,7 @@ XAVIPlayer::XAVIPlayer(QWidget *parent)
     connect(ui.btnSetCutStop, SIGNAL(clicked()), this, SLOT(onClickBtnSetCutStop()));
     connect(ui.btnAddCutTask, SIGNAL(clicked()), this, SLOT(onClickBtnAddCutTask()));
     connect(ui.btnCut, SIGNAL(clicked()), this, SLOT(onClickBtnCut()));
+    connect(ui.btnMerge, SIGNAL(clicked()), this, SLOT(onClickBtnMerge()));
 
     connect(this, SIGNAL(SigFileCutComplete(int)), this, SLOT(slotFileCutComplete(int)));
 
@@ -181,7 +190,9 @@ void XAVIPlayer::slotPlay(QString playName, int seekTime)
     QString native_path = QDir::toNativeSeparators(playName);
     playing_fileinfo_ = QFileInfo(native_path);
 
-    ui.editCutOutName->setText(playing_fileinfo_.completeBaseName() + "_cut." + playing_fileinfo_.suffix());
+    // 切换视频时重置自动命名计数器和已完成片段记录。
+    task_counter_for_source_ = 0;
+    completed_cut_files_.clear();
 
     player_->PlayFile(native_path.toUtf8().constData());
     player_->SetVolume(ui.sliderAudio->value());
@@ -348,10 +359,18 @@ FileCutThread* XAVIPlayer::GuiCreateCutJob(bool toTable)
         return nullptr;
     }
 
+    // 自动命名：与原视频同目录，按 _1 _2 _3 递增。重名直接覆盖。
+    task_counter_for_source_ += 1;
+    const QString out_name = QString("%1_%2.%3")
+        .arg(playing_fileinfo_.completeBaseName())
+        .arg(task_counter_for_source_)
+        .arg(playing_fileinfo_.suffix());
+    const QString out_full = playing_fileinfo_.canonicalPath() + "/" + out_name;
+
     std::string from_name = strhelper::Wide2Ansi(strhelper::Utf82Wide(
         playing_fileinfo_.canonicalFilePath().toUtf8().constData()));
     std::string to_name = strhelper::Wide2Ansi(strhelper::Utf82Wide(
-        (playing_fileinfo_.canonicalPath() + "/" + ui.editCutOutName->text()).toUtf8().constData()));
+        out_full.toUtf8().constData()));
 
     FileCutThread* cut_job = new FileCutThread(cut_id_, this,
         from_name, to_name, cut_beg.msecsSinceStartOfDay() / 1000, 0, cut_millsecs / 1000,
@@ -361,11 +380,11 @@ FileCutThread* XAVIPlayer::GuiCreateCutJob(bool toTable)
     if (toTable) {
         int rowcount = ui.tableCutTask->rowCount();
         ui.tableCutTask->setRowCount(rowcount + 1);
-        ui.tableCutTask->setItem(rowcount, kTableIndexId, new QTableWidgetItem(QString::number(cut_id_)));
-        ui.tableCutTask->setItem(rowcount, kTableIndexFile, new QTableWidgetItem(playing_fileinfo_.fileName()));
+        ui.tableCutTask->setItem(rowcount, kTableIndexId,      new QTableWidgetItem(QString::number(cut_id_)));
+        ui.tableCutTask->setItem(rowcount, kTableIndexFile,    new QTableWidgetItem(playing_fileinfo_.fileName()));
         ui.tableCutTask->setItem(rowcount, kTableIndexTimeBeg, new QTableWidgetItem(ui.editCutTimeBeg->text()));
         ui.tableCutTask->setItem(rowcount, kTableIndexTimeEnd, new QTableWidgetItem(ui.editCutTimeEnd->text()));
-        ui.tableCutTask->setItem(rowcount, kTableIndexOutName, new QTableWidgetItem(ui.editCutOutName->text()));
+        ui.tableCutTask->setItem(rowcount, kTableIndexOutName, new QTableWidgetItem(out_name));
     }
 
     cut_id_++;
@@ -403,6 +422,8 @@ void XAVIPlayer::slotFileCutComplete(int jobId)
 
     auto it = cut_threads_.find(jobId);
     if (it != cut_threads_.end()) {
+        // 把这条任务的实际输出路径记下来，给后续“开始合并”使用。
+        completed_cut_files_.push_back(it->second->ToName());
         it->second->Stop();
         delete it->second;
         cut_threads_.erase(it);
@@ -414,6 +435,104 @@ void XAVIPlayer::slotFileCutComplete(int jobId)
         FileCutThread* cut_job = cut_threads_.begin()->second;
         cut_job->Start();
     }
+}
+
+void XAVIPlayer::onClickBtnMerge()
+{
+    if (!playing_fileinfo_.exists()) {
+        QMessageBox::warning(this, QStringLiteral("提示"),
+            QStringLiteral("请先打开一个视频文件"), QMessageBox::Ok);
+        return;
+    }
+    if (completed_cut_files_.empty()) {
+        QMessageBox::warning(this, QStringLiteral("提示"),
+            QStringLiteral("还没有可合并的剪切片段，先“开始剪切”完成至少一个任务"),
+            QMessageBox::Ok);
+        return;
+    }
+    if (merge_process_) {
+        QMessageBox::information(this, QStringLiteral("提示"),
+            QStringLiteral("当前已有合并任务在执行中"), QMessageBox::Ok);
+        return;
+    }
+
+    // 选定输出名：<base>_new.<ext>，存在就 _new_1, _new_2 ...
+    const QString dir  = playing_fileinfo_.canonicalPath();
+    const QString base = playing_fileinfo_.completeBaseName();
+    const QString ext  = playing_fileinfo_.suffix();
+    QString out_path = QString("%1/%2_new.%3").arg(dir, base, ext);
+    int n = 1;
+    while (QFileInfo::exists(out_path)) {
+        out_path = QString("%1/%2_new_%3.%4").arg(dir, base).arg(n).arg(ext);
+        ++n;
+    }
+    merge_output_path_ = out_path;
+
+    // 写 ffmpeg concat demuxer 列表文件，路径里的反斜杠和单引号都要转义。
+    merge_concat_list_path_ = QString("%1/%2_concat_%3.txt").arg(
+        QStandardPaths::writableLocation(QStandardPaths::TempLocation), base,
+        QString::number(QDateTime::currentMSecsSinceEpoch()));
+    QFile listFile(merge_concat_list_path_);
+    if (!listFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, QStringLiteral("错误"),
+            QStringLiteral("无法创建 ffmpeg concat 列表文件"), QMessageBox::Ok);
+        return;
+    }
+    QTextStream ts(&listFile);
+    ts.setEncoding(QStringConverter::Utf8);
+    for (const auto& s : completed_cut_files_) {
+        // ffmpeg concat demuxer 期望: file '<path>'，其中 ' 转义为 '\''。
+        QString p = QString::fromLocal8Bit(s.c_str()).replace('\\', '/');
+        p.replace("'", "'\\''");
+        ts << "file '" << p << "'\n";
+    }
+    listFile.close();
+
+    const QString ffmpeg = QCoreApplication::applicationDirPath() + "/tools/ffmpeg.exe";
+    if (!QFileInfo::exists(ffmpeg)) {
+        QMessageBox::warning(this, QStringLiteral("错误"),
+            QStringLiteral("找不到 ffmpeg：%1").arg(ffmpeg), QMessageBox::Ok);
+        return;
+    }
+
+    QStringList args;
+    args << "-y"
+         << "-f" << "concat"
+         << "-safe" << "0"
+         << "-i" << QDir::toNativeSeparators(merge_concat_list_path_)
+         << "-c" << "copy"
+         << QDir::toNativeSeparators(out_path);
+
+    merge_process_ = new QProcess(this);
+    merge_process_->setProgram(ffmpeg);
+    merge_process_->setArguments(args);
+    connect(merge_process_, SIGNAL(finished(int)), this, SLOT(slotMergeFinished(int)));
+
+    ui.btnMerge->setEnabled(false);
+    ui.btnMerge->setText(QStringLiteral("合并中..."));
+    merge_process_->start();
+}
+
+void XAVIPlayer::slotMergeFinished(int exitCode)
+{
+    QFile::remove(merge_concat_list_path_);
+
+    if (exitCode == 0) {
+        QMessageBox::information(this, QStringLiteral("合并完成"),
+            QStringLiteral("已生成：\n%1").arg(merge_output_path_), QMessageBox::Ok);
+    } else {
+        QString err = merge_process_ ? QString::fromLocal8Bit(merge_process_->readAllStandardError()) : QString();
+        QMessageBox::warning(this, QStringLiteral("合并失败"),
+            QStringLiteral("ffmpeg 退出码 %1\n%2").arg(exitCode).arg(err.left(800)),
+            QMessageBox::Ok);
+    }
+
+    if (merge_process_) {
+        merge_process_->deleteLater();
+        merge_process_ = nullptr;
+    }
+    ui.btnMerge->setEnabled(true);
+    ui.btnMerge->setText(QStringLiteral("开始合并"));
 }
 
 void XAVIPlayer::slotDClickVideo()

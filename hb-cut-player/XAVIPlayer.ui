@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1080</width>
-    <height>720</height>
+    <width>1100</width>
+    <height>900</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -70,6 +70,13 @@ QLabel#labelSpeedGroup {
     font-size: 9pt;
     padding: 0 6px 0 10px;
     letter-spacing: 1px;
+}
+
+QLabel#labelCutSection {
+    color: #d8dee9;
+    font-size: 11pt;
+    font-weight: 600;
+    padding: 0 0 4px 0;
 }
 
 QPushButton {
@@ -525,181 +532,143 @@ QToolTip {
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
-      <layout class="QVBoxLayout" name="workCardLayout">
-       <property name="spacing"><number>0</number></property>
-       <property name="leftMargin"><number>10</number></property>
-       <property name="topMargin"><number>10</number></property>
-       <property name="rightMargin"><number>10</number></property>
-       <property name="bottomMargin"><number>10</number></property>
+      <layout class="QHBoxLayout" name="cutLayout">
+       <property name="leftMargin"><number>14</number></property>
+       <property name="topMargin"><number>12</number></property>
+       <property name="rightMargin"><number>14</number></property>
+       <property name="bottomMargin"><number>12</number></property>
+       <property name="spacing"><number>14</number></property>
        <item>
-        <widget class="QTabWidget" name="tabWidget">
+        <layout class="QVBoxLayout" name="cutFormColumn">
+         <property name="spacing"><number>8</number></property>
+         <item>
+          <widget class="QLabel" name="labelCutSection">
+           <property name="text">
+            <string>视频剪辑</string>
+           </property>
+           <property name="objectName">
+            <string notr="true">labelCutSection</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="cutFormLayout">
+           <property name="horizontalSpacing"><number>8</number></property>
+           <property name="verticalSpacing"><number>6</number></property>
+           <item row="0" column="0">
+            <widget class="QPushButton" name="btnSetCutStart">
+             <property name="text">
+              <string>设定开始</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="editCutTimeBeg">
+             <property name="placeholderText">
+              <string>HH:mm:ss</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="btnSetCutStop">
+             <property name="text">
+              <string>设定结束</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="editCutTimeEnd">
+             <property name="placeholderText">
+              <string>HH:mm:ss</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="2">
+            <widget class="QPushButton" name="btnAddCutTask">
+             <property name="text">
+              <string>添加剪切任务</string>
+             </property>
+             <property name="toolTip">
+              <string>把当前 [设定开始, 设定结束] 区间作为新任务加入下面的列表</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="cutFormSpacer">
+           <property name="orientation"><enum>Qt::Vertical</enum></property>
+           <property name="sizeHint" stdset="0">
+            <size><width>20</width><height>1</height></size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="cutActionLayout">
+         <property name="spacing"><number>8</number></property>
+         <item>
+          <widget class="QPushButton" name="btnCut">
+           <property name="objectName">
+            <string notr="true">btnPrimary</string>
+           </property>
+           <property name="text">
+            <string>开始剪切</string>
+           </property>
+           <property name="minimumSize">
+            <size><width>110</width><height>0</height></size>
+           </property>
+           <property name="toolTip">
+            <string>按列表里的所有任务依次剪切</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnMerge">
+           <property name="text">
+            <string>开始合并</string>
+           </property>
+           <property name="toolTip">
+            <string>把已经剪好的片段按列表顺序合并成 &lt;源文件名&gt;_new.mp4</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="cutActionSpacer">
+           <property name="orientation"><enum>Qt::Vertical</enum></property>
+           <property name="sizeHint" stdset="0">
+            <size><width>20</width><height>1</height></size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="tableCutTask">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>1</verstretch>
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-      <widget class="QWidget" name="tabCut">
-       <attribute name="title">
-        <string>剪切</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="cutLayout">
-        <property name="leftMargin">
-         <number>10</number>
-        </property>
-        <property name="topMargin">
-         <number>10</number>
-        </property>
-        <property name="rightMargin">
-         <number>10</number>
-        </property>
-        <property name="bottomMargin">
-         <number>10</number>
-        </property>
-        <property name="spacing">
-         <number>10</number>
-        </property>
-        <item>
-         <layout class="QGridLayout" name="cutFormLayout">
-          <property name="horizontalSpacing">
-           <number>8</number>
-          </property>
-          <property name="verticalSpacing">
-           <number>6</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="QPushButton" name="btnSetCutStart">
-            <property name="text">
-             <string>设定开始</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="editCutTimeBeg">
-            <property name="placeholderText">
-             <string>HH:mm:ss</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="btnSetCutStop">
-            <property name="text">
-             <string>设定结束</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="editCutTimeEnd">
-            <property name="placeholderText">
-             <string>HH:mm:ss</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="labelOutName">
-            <property name="text">
-             <string>输出文件</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="editCutOutName"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="cutActionLayout">
-          <property name="spacing">
-           <number>6</number>
-          </property>
-          <item>
-           <widget class="QPushButton" name="btnAddCutTask">
-            <property name="text">
-             <string>添加任务</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btnCut">
-            <property name="objectName">
-             <string notr="true">btnPrimary</string>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>开始剪切</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QTableWidget" name="tableCutTask">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>1</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="alternatingRowColors">
-           <bool>true</bool>
-          </property>
-          <property name="columnCount">
-           <number>5</number>
-          </property>
-          <column>
-           <property name="text">
-            <string>任务号</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>源文件</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>起始时间</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>结束时间</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>目标文件</string>
-           </property>
-          </column>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tabMerge">
-       <attribute name="title">
-        <string>合并</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="mergeLayout">
-        <item>
-         <widget class="QLabel" name="labelMergePlaceholder">
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <property name="text">
-           <string>合并功能开发中…</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+         <property name="alternatingRowColors"><bool>true</bool></property>
+         <property name="columnCount"><number>5</number></property>
+         <column>
+          <property name="text"><string>任务号</string></property>
+         </column>
+         <column>
+          <property name="text"><string>源文件</string></property>
+         </column>
+         <column>
+          <property name="text"><string>起始时间</string></property>
+         </column>
+         <column>
+          <property name="text"><string>结束时间</string></property>
+         </column>
+         <column>
+          <property name="text"><string>目标文件</string></property>
+         </column>
         </widget>
        </item>
       </layout>

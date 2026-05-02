@@ -50,7 +50,8 @@ public:
 
     void SetSecFrameCount(int secFrames);
 
-    const std::string& FromName() { return from_name_; }
+    const std::string& FromName() const { return from_name_; }
+    const std::string& ToName()   const { return to_name_; }
 
     virtual void ThreadRun();
 
