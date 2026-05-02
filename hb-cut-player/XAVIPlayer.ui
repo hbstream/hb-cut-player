@@ -65,6 +65,13 @@ QLabel#labelRate {
     padding: 0 8px;
 }
 
+QLabel#labelSpeedGroup {
+    color: #8b95a3;
+    font-size: 9pt;
+    padding: 0 6px 0 10px;
+    letter-spacing: 1px;
+}
+
 QPushButton {
     background-color: #2f343c;
     color: #e6e6e6;
@@ -363,9 +370,38 @@ QToolTip {
           </widget>
          </item>
          <item>
-          <widget class="Line" name="line1">
+          <spacer name="gapBeforeSpeed">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Line" name="speedDivider">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelSpeedGroup">
+           <property name="objectName">
+            <string notr="true">labelSpeedGroup</string>
+           </property>
+           <property name="text">
+            <string>播放速度</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
