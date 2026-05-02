@@ -3,24 +3,28 @@
  * Copyright: (c) 2014 Haibin Du(haibindev.cnblogs.com). All rights reserved.
  * -----------------------------------------------------------------------------
  *
+ * å­—ç¬¦ä¸²ç›¸å…³å¸®åŠ©å‡½æ•°ã€‚
+ *
  * -----------------------------------------------------------------------------
  * 2016-6-8 11:06 - Created (Haibin Du)
  ******************************************************************************/
 #include "str_helper.h"
 
 #include <algorithm>
-#include <functional>
+#include <cctype>
 
 namespace strhelper {
 
+namespace {
+inline bool IsNotSpace(unsigned char c) { return !std::isspace(c); }
+} // namespace
+
 void StringTrim(std::string& str)
 {
-    std::string::iterator it = std::find_if(str.begin(), str.end(),
-        std::not1(std::ptr_fun(isspace)));
+    auto it = std::find_if(str.begin(), str.end(), [](unsigned char c) { return IsNotSpace(c); });
     str.erase(str.begin(), it);
 
-    std::string::reverse_iterator rit = std::find_if(str.rbegin(), str.rend(),
-        std::not1(std::ptr_fun(isspace))); 
+    auto rit = std::find_if(str.rbegin(), str.rend(), [](unsigned char c) { return IsNotSpace(c); });
     str.erase(rit.base(), str.end());
 }
 
@@ -42,10 +46,10 @@ void Splite(std::vector<std::string>& result, const std::string& input,
     std::string::size_type spliter_length = spliter.size();
     std::string::size_type last_pos = 0;
 
-    while(last_pos < input.length())
+    while (last_pos < input.length())
     {
         std::string::size_type pos = input.find(spliter, last_pos);
-        if( pos == std::string::npos )
+        if (pos == std::string::npos)
         {
             result.push_back(input.substr(last_pos));
             return;
@@ -61,11 +65,11 @@ void StringReplace(std::string &strBase, const std::string& strSrc,
     std::string::size_type pos = 0;
     std::string::size_type srcLen = strSrc.size();
     std::string::size_type desLen = strDes.size();
-    pos=strBase.find(strSrc, pos); 
+    pos = strBase.find(strSrc, pos);
     while ((pos != std::string::npos))
     {
         strBase.replace(pos, srcLen, strDes);
-        pos=strBase.find(strSrc, (pos+desLen));
+        pos = strBase.find(strSrc, (pos + desLen));
     }
 }
 
@@ -73,71 +77,41 @@ void StringReplace(std::string &strBase, const std::string& strSrc,
 
 std::string Wide2Ansi(const std::wstring& _src)
 {
-    int nBufSize = ::WideCharToMultiByte(GetACP(), 0, _src.c_str(),-1, NULL, 0, 0, FALSE);
-
+    int nBufSize = ::WideCharToMultiByte(GetACP(), 0, _src.c_str(), -1, NULL, 0, 0, FALSE);
     char *szBuf = new char[nBufSize + 1];
-
-    ::WideCharToMultiByte(GetACP(), 0, _src.c_str(),-1, szBuf, nBufSize, 0, FALSE);
-
+    ::WideCharToMultiByte(GetACP(), 0, _src.c_str(), -1, szBuf, nBufSize, 0, FALSE);
     std::string strRet(szBuf);
-
-    delete []szBuf;
-    szBuf = NULL;
-
+    delete[] szBuf;
     return strRet;
 }
 
 std::wstring Ansi2Wide(const std::string& _src)
 {
-    //¼ÆËã×Ö·û´® string ×ª³É wchar_t Ö®ºóÕ¼ÓÃµÄÄÚ´æ×Ö½ÚÊý
-    int nBufSize = ::MultiByteToWideChar(GetACP(),0,_src.c_str(),-1,NULL,0); 
-
-    //Îª wsbuf ·ÖÅäÄÚ´æ BufSize ¸ö×Ö½Ú
+    int nBufSize = ::MultiByteToWideChar(GetACP(), 0, _src.c_str(), -1, NULL, 0);
     wchar_t *wsBuf = new wchar_t[nBufSize + 1];
-
-    //×ª»¯Îª unicode µÄ WideString
-    ::MultiByteToWideChar(GetACP(),0,_src.c_str(),-1,wsBuf,nBufSize); 
-
+    ::MultiByteToWideChar(GetACP(), 0, _src.c_str(), -1, wsBuf, nBufSize);
     std::wstring wstrRet(wsBuf);
-
-    delete []wsBuf;
-    wsBuf = NULL;
-
+    delete[] wsBuf;
     return wstrRet;
 }
 
 std::string Wide2Utf8(const std::wstring& _src)
 {
-    int nBufSize = ::WideCharToMultiByte(CP_UTF8, 0, _src.c_str(),-1, NULL, 0, NULL, NULL);
-
+    int nBufSize = ::WideCharToMultiByte(CP_UTF8, 0, _src.c_str(), -1, NULL, 0, NULL, NULL);
     char *szBuf = new char[nBufSize + 1];
-
-    ::WideCharToMultiByte(CP_UTF8, 0, _src.c_str(),-1, szBuf, nBufSize, NULL, NULL);
-
+    ::WideCharToMultiByte(CP_UTF8, 0, _src.c_str(), -1, szBuf, nBufSize, NULL, NULL);
     std::string strRet(szBuf);
-
-    delete []szBuf;
-    szBuf = NULL;
-
+    delete[] szBuf;
     return strRet;
 }
 
 std::wstring Utf82Wide(const std::string& _src)
 {
-    //¼ÆËã×Ö·û´® string ×ª³É wchar_t Ö®ºóÕ¼ÓÃµÄÄÚ´æ×Ö½ÚÊý
-    int nBufSize = ::MultiByteToWideChar(CP_UTF8,0,_src.c_str(),-1,NULL,0); 
-
-    //Îª wsbuf ·ÖÅäÄÚ´æ BufSize ¸ö×Ö½Ú
+    int nBufSize = ::MultiByteToWideChar(CP_UTF8, 0, _src.c_str(), -1, NULL, 0);
     wchar_t *wsBuf = new wchar_t[nBufSize + 1];
-
-    //×ª»¯Îª unicode µÄ WideString
-    ::MultiByteToWideChar(CP_UTF8,0,_src.c_str(),-1,wsBuf,nBufSize); 
-
+    ::MultiByteToWideChar(CP_UTF8, 0, _src.c_str(), -1, wsBuf, nBufSize);
     std::wstring wstrRet(wsBuf);
-
-    delete []wsBuf;
-    wsBuf = NULL;
-
+    delete[] wsBuf;
     return wstrRet;
 }
 

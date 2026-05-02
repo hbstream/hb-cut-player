@@ -42,3 +42,20 @@ x64
 *.ilk
 *.exp
 *.zip
+
+# CMake / IDE 缓存
+build/
+out/
+CMakeUserPresets.json
+.vs/
+.idea/
+.vscode/
+
+# Qt 自动生成
+GeneratedFiles/
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+
+# scripts/gen_vlc_import_libs.ps1 生成的中间产物
+hb-cut-player/vlc/x64/*.def

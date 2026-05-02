@@ -122,11 +122,11 @@ void GetDirFileList(const std::string& dir,
         if ((cfilename.size()==1)&&(cfilename.find('.')==0))
             continue;
         if ((find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-            == FILE_ATTRIBUTE_DIRECTORY)		// 目录
+            == FILE_ATTRIBUTE_DIRECTORY)		// 鐩綍
         {
             dirList.push_back(find_dirstr + cfilename + "\\");
         }
-        else									// 文件
+        else									// 鏂囦欢
         {
             fileList.push_back(find_dirstr + cfilename);
         }
@@ -162,10 +162,10 @@ void GetDirFileList(const std::string& dir, std::vector<std::string>& fileList)
         if ((cfilename.size()==1)&&(cfilename.find('.')==0))
             continue;
         if ((find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-            == FILE_ATTRIBUTE_DIRECTORY)		// 目录
+            == FILE_ATTRIBUTE_DIRECTORY)		// 鐩綍
         {
         }
-        else									// 文件
+        else									// 鏂囦欢
         {
             fileList.push_back(find_dirstr + cfilename);
         }

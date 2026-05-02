@@ -6,386 +6,635 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>892</width>
-    <height>807</height>
+    <width>1080</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>XFLVPlayer</string>
+   <string>HB Cut Player</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow,
+QWidget#centralWidget {
+    background-color: #15171b;
+    color: #e6e6e6;
+}
+
+/* 上半区：播放器，整体偏黑，紧贴视频画面 */
+QFrame#playerCard {
+    background-color: #15171b;
+    border: none;
+}
+QFrame#frameVideo {
+    background-color: #000000;
+    border: none;
+}
+QFrame#bottomBar {
+    background-color: #1b1e23;
+    border-top: 1px solid #2c3138;
+}
+
+/* 下半区：剪切 / 合并工作区，使用更亮的灰，作为独立的“卡片” */
+QFrame#workCard {
+    background-color: #232830;
+    border: 1px solid #2f3640;
+    border-radius: 6px;
+}
+
+QTabWidget::pane,
+QWidget#tabCut,
+QWidget#tabMerge {
+    background-color: #232830;
+    border: none;
+}
+
+QLabel {
+    color: #e6e6e6;
+}
+
+QLabel#labelTime {
+    color: #d6d6d6;
+    font-family: Consolas, &quot;DejaVu Sans Mono&quot;, monospace;
+    font-size: 12pt;
+    padding: 0 8px;
+}
+
+QLabel#labelRate {
+    color: #f7c873;
+    font-weight: bold;
+    padding: 0 8px;
+}
+
+QPushButton {
+    background-color: #2f343c;
+    color: #e6e6e6;
+    border: 1px solid #3a4049;
+    border-radius: 4px;
+    padding: 6px 14px;
+    min-width: 56px;
+}
+QPushButton:hover { background-color: #3a4049; }
+QPushButton:pressed { background-color: #4a5260; }
+QPushButton:disabled { color: #6a6a6a; background-color: #262a31; }
+
+/* 透明圆形播放控制按钮，纯图标风格 */
+QPushButton[transportRole="true"] {
+    background-color: transparent;
+    border: none;
+    border-radius: 18px;
+    min-width: 36px;
+    max-width: 36px;
+    min-height: 36px;
+    max-height: 36px;
+    padding: 0;
+    font-size: 16pt;
+    color: #d8dee9;
+}
+QPushButton[transportRole="true"]:hover {
+    background-color: #2f343c;
+    color: #ffffff;
+}
+QPushButton[transportRole="true"]:pressed { background-color: #3a4049; }
+
+QPushButton[primaryTransport="true"] {
+    background-color: #1f6feb;
+    color: #ffffff;
+}
+QPushButton[primaryTransport="true"]:hover  { background-color: #2f7df6; }
+QPushButton[primaryTransport="true"]:pressed { background-color: #1657c3; }
+
+QPushButton#btnPrimary {
+    background-color: #1f6feb;
+    border-color: #1f6feb;
+    color: #ffffff;
+    font-weight: bold;
+}
+QPushButton#btnPrimary:hover { background-color: #2f7df6; }
+QPushButton#btnPrimary:pressed { background-color: #1657c3; }
+
+QPushButton#btnDanger {
+    background-color: #b63a3a;
+    border-color: #b63a3a;
+    color: #ffffff;
+}
+QPushButton#btnDanger:hover { background-color: #c84747; }
+
+QLineEdit {
+    background-color: #1c1f24;
+    border: 1px solid #3a4049;
+    border-radius: 3px;
+    padding: 4px 6px;
+    color: #e6e6e6;
+    selection-background-color: #1f6feb;
+}
+
+QSlider::groove:horizontal {
+    height: 6px;
+    background: #1c1f24;
+    border-radius: 3px;
+}
+QSlider::sub-page:horizontal {
+    background: #1f6feb;
+    border-radius: 3px;
+}
+QSlider::handle:horizontal {
+    background: #ffffff;
+    border: 1px solid #1f6feb;
+    width: 12px;
+    margin: -4px 0;
+    border-radius: 6px;
+}
+QSlider::handle:horizontal:hover { background: #f0f7ff; }
+
+QTabWidget::pane { top: -1px; }
+QTabBar::tab {
+    background: #262a31;
+    color: #c0c0c0;
+    padding: 6px 18px;
+    border: 1px solid #2c3138;
+    border-bottom: none;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+QTabBar::tab:selected {
+    background: #1f6feb;
+    color: #ffffff;
+}
+QTabBar::tab:hover:!selected { background: #2f343c; }
+
+QTableWidget {
+    background-color: #1c1f24;
+    alternate-background-color: #232730;
+    color: #e6e6e6;
+    gridline-color: #2c3138;
+    border: 1px solid #2c3138;
+    selection-background-color: #1f6feb;
+    selection-color: #ffffff;
+}
+QHeaderView::section {
+    background-color: #2f343c;
+    color: #e6e6e6;
+    padding: 4px;
+    border: none;
+    border-right: 1px solid #1c1f24;
+}
+</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <property name="font">
-    <font>
-     <family>微软雅黑</family>
-    </font>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <layout class="QVBoxLayout" name="rootLayout">
+    <property name="spacing">
+     <number>10</number>
+    </property>
     <property name="leftMargin">
-     <number>0</number>
+     <number>10</number>
     </property>
     <property name="topMargin">
-     <number>0</number>
+     <number>10</number>
     </property>
     <property name="rightMargin">
-     <number>0</number>
+     <number>10</number>
     </property>
     <property name="bottomMargin">
-     <number>0</number>
+     <number>10</number>
     </property>
     <item>
-     <widget class="QFrame" name="frame">
+     <widget class="QFrame" name="playerCard">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>0</horstretch>
-        <verstretch>1</verstretch>
+        <verstretch>2</verstretch>
        </sizepolicy>
       </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(255, 255, 255);</string>
-      </property>
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QFrame" name="frame_2">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="playerLayout">
        <property name="spacing">
         <number>0</number>
        </property>
+       <property name="leftMargin"><number>0</number></property>
+       <property name="topMargin"><number>0</number></property>
+       <property name="rightMargin"><number>0</number></property>
+       <property name="bottomMargin"><number>0</number></property>
+       <item>
+        <widget class="QFrame" name="frameVideo">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="bottomBar">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <layout class="QVBoxLayout" name="bottomLayout">
+       <property name="spacing">
+        <number>6</number>
+       </property>
        <property name="leftMargin">
-        <number>0</number>
+        <number>10</number>
        </property>
        <property name="topMargin">
-        <number>0</number>
+        <number>8</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>10</number>
        </property>
        <property name="bottomMargin">
-        <number>0</number>
+        <number>8</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QHBoxLayout" name="sliderRowLayout">
+         <property name="spacing">
+          <number>10</number>
+         </property>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayoutV">
-           <item>
-            <widget class="QSlider" name="sliderVideo">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSlider" name="sliderAudio">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QSlider" name="sliderVideo">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>3</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QPushButton" name="btnOpen">
-             <property name="text">
-              <string>打开</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnStart">
-             <property name="text">
-              <string>开始</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnStop">
-             <property name="text">
-              <string>结束</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnIncrease">
-             <property name="maximumSize">
-              <size>
-               <width>50</width>
-               <height>16777214</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>加速5</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnDecrease">
-             <property name="maximumSize">
-              <size>
-               <width>50</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>减速5</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnInc10">
-             <property name="maximumSize">
-              <size>
-               <width>50</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>加速10</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnDec10">
-             <property name="maximumSize">
-              <size>
-               <width>50</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>减速10</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnRateReset">
-             <property name="maximumSize">
-              <size>
-               <width>50</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>重置</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QLabel" name="labelTime">
-             <property name="text">
-              <string>00:00:00/00:00:00</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QLabel" name="labelTime">
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="text">
+            <string>00:00:00 / 00:00:00</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelVolIcon">
+           <property name="text">
+            <string>🔊</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="sliderAudio">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>140</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="controlRowLayout">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="btnOpen">
+           <property name="toolTip">
+            <string>打开视频文件 (支持拖放)</string>
+           </property>
+           <property name="text">
+            <string>📂</string>
+           </property>
+           <property name="transportRole" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnStart">
+           <property name="toolTip">
+            <string>播放 / 暂停 (空格)</string>
+           </property>
+           <property name="text">
+            <string>▶</string>
+           </property>
+           <property name="transportRole" stdset="0">
+            <bool>true</bool>
+           </property>
+           <property name="primaryTransport" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnStop">
+           <property name="toolTip">
+            <string>停止</string>
+           </property>
+           <property name="text">
+            <string>⏹</string>
+           </property>
+           <property name="transportRole" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line1">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnDec10">
+           <property name="toolTip">
+            <string>减速 10%</string>
+           </property>
+           <property name="text">
+            <string>⏪</string>
+           </property>
+           <property name="transportRole" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnDecrease">
+           <property name="toolTip">
+            <string>减速 5%</string>
+           </property>
+           <property name="text">
+            <string>◀</string>
+           </property>
+           <property name="transportRole" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnRateReset">
+           <property name="toolTip">
+            <string>恢复 1.0× 倍速</string>
+           </property>
+           <property name="text">
+            <string>⟳</string>
+           </property>
+           <property name="transportRole" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnIncrease">
+           <property name="toolTip">
+            <string>加速 5%</string>
+           </property>
+           <property name="text">
+            <string>▶</string>
+           </property>
+           <property name="transportRole" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnInc10">
+           <property name="toolTip">
+            <string>加速 10%</string>
+           </property>
+           <property name="text">
+            <string>⏩</string>
+           </property>
+           <property name="transportRole" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelRate">
+           <property name="minimumSize">
+            <size>
+             <width>56</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="text">
+            <string>100%</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelHint">
+           <property name="text">
+            <string>← / → ±5s   Ctrl ±30s   Shift ±60s   双击全屏</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+        </widget>
        </item>
       </layout>
      </widget>
     </item>
     <item>
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="QFrame" name="workCard">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
+        <verstretch>1</verstretch>
        </sizepolicy>
       </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
       </property>
+      <layout class="QVBoxLayout" name="workCardLayout">
+       <property name="spacing"><number>0</number></property>
+       <property name="leftMargin"><number>10</number></property>
+       <property name="topMargin"><number>10</number></property>
+       <property name="rightMargin"><number>10</number></property>
+       <property name="bottomMargin"><number>10</number></property>
+       <item>
+        <widget class="QTabWidget" name="tabWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
       <widget class="QWidget" name="tabCut">
        <attribute name="title">
         <string>剪切</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <layout class="QHBoxLayout" name="cutLayout">
         <property name="leftMargin">
-         <number>3</number>
+         <number>10</number>
         </property>
         <property name="topMargin">
-         <number>3</number>
+         <number>10</number>
         </property>
         <property name="rightMargin">
-         <number>3</number>
+         <number>10</number>
         </property>
         <property name="bottomMargin">
-         <number>3</number>
+         <number>10</number>
+        </property>
+        <property name="spacing">
+         <number>10</number>
         </property>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="1" column="0">
-             <widget class="QPushButton" name="btnSetCutStop">
-              <property name="text">
-               <string>设定结束</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QPushButton" name="btnSetCutStart">
-              <property name="text">
-               <string>设定开始</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="labelOutName">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>  输出名称</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="editCutOutName"/>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="editCutTimeBeg"/>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="editCutTimeEnd"/>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_5">
-            <property name="topMargin">
-             <number>3</number>
+         <layout class="QGridLayout" name="cutFormLayout">
+          <property name="horizontalSpacing">
+           <number>8</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>6</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="btnSetCutStart">
+            <property name="text">
+             <string>设定开始</string>
             </property>
-            <item>
-             <widget class="QPushButton" name="btnAddCutTask">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>添加任务</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="btnCut">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>开始执行</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="editCutTimeBeg">
+            <property name="placeholderText">
+             <string>HH:mm:ss</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="btnSetCutStop">
+            <property name="text">
+             <string>设定结束</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="editCutTimeEnd">
+            <property name="placeholderText">
+             <string>HH:mm:ss</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelOutName">
+            <property name="text">
+             <string>输出文件</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="editCutOutName"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="cutActionLayout">
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="btnAddCutTask">
+            <property name="text">
+             <string>添加任务</string>
+            </property>
+           </widget>
           </item>
           <item>
-           <widget class="QTableWidget" name="tableCutTask">
+           <widget class="QPushButton" name="btnCut">
+            <property name="objectName">
+             <string notr="true">btnPrimary</string>
+            </property>
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-              <horstretch>1</horstretch>
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>100</height>
-             </size>
+            <property name="text">
+             <string>开始剪切</string>
             </property>
-            <property name="font">
-             <font>
-              <family>微软雅黑</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-            <property name="columnCount">
-             <number>5</number>
-            </property>
-            <column>
-             <property name="text">
-              <string>任务号</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>源文件</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>起始时间</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>结束时间</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>目标文件</string>
-             </property>
-            </column>
            </widget>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="tableCutTask">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="columnCount">
+           <number>5</number>
+          </property>
+          <column>
+           <property name="text">
+            <string>任务号</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>源文件</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>起始时间</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>结束时间</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>目标文件</string>
+           </property>
+          </column>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -393,13 +642,25 @@
        <attribute name="title">
         <string>合并</string>
        </attribute>
+       <layout class="QVBoxLayout" name="mergeLayout">
+        <item>
+         <widget class="QLabel" name="labelMergePlaceholder">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="text">
+           <string>合并功能开发中…</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>
-   <zorder>frame_2</zorder>
-   <zorder>tabWidget</zorder>
-   <zorder>frame</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
@@ -413,14 +674,8 @@
    <receiver>XAVIPlayerClass</receiver>
    <slot>onBtnOpenClick()</slot>
    <hints>
-    <hint type="sourcelabel">
-     <x>59</x>
-     <y>655</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>114</x>
-     <y>571</y>
-    </hint>
+    <hint type="sourcelabel"><x>0</x><y>0</y></hint>
+    <hint type="destinationlabel"><x>0</x><y>0</y></hint>
    </hints>
   </connection>
   <connection>
@@ -429,14 +684,8 @@
    <receiver>XAVIPlayerClass</receiver>
    <slot>onBtnStartClick()</slot>
    <hints>
-    <hint type="sourcelabel">
-     <x>161</x>
-     <y>655</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>169</x>
-     <y>541</y>
-    </hint>
+    <hint type="sourcelabel"><x>0</x><y>0</y></hint>
+    <hint type="destinationlabel"><x>0</x><y>0</y></hint>
    </hints>
   </connection>
   <connection>
@@ -445,14 +694,8 @@
    <receiver>XAVIPlayerClass</receiver>
    <slot>onBtnStopClick()</slot>
    <hints>
-    <hint type="sourcelabel">
-     <x>242</x>
-     <y>655</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>301</x>
-     <y>623</y>
-    </hint>
+    <hint type="sourcelabel"><x>0</x><y>0</y></hint>
+    <hint type="destinationlabel"><x>0</x><y>0</y></hint>
    </hints>
   </connection>
   <connection>
@@ -461,14 +704,8 @@
    <receiver>XAVIPlayerClass</receiver>
    <slot>onAudioSliderMove(int)</slot>
    <hints>
-    <hint type="sourcelabel">
-     <x>885</x>
-     <y>622</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>555</x>
-     <y>566</y>
-    </hint>
+    <hint type="sourcelabel"><x>0</x><y>0</y></hint>
+    <hint type="destinationlabel"><x>0</x><y>0</y></hint>
    </hints>
   </connection>
   <connection>
@@ -477,14 +714,8 @@
    <receiver>XAVIPlayerClass</receiver>
    <slot>onVideoSliderMove(int)</slot>
    <hints>
-    <hint type="sourcelabel">
-     <x>326</x>
-     <y>622</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>384</x>
-     <y>606</y>
-    </hint>
+    <hint type="sourcelabel"><x>0</x><y>0</y></hint>
+    <hint type="destinationlabel"><x>0</x><y>0</y></hint>
    </hints>
   </connection>
   <connection>
@@ -493,14 +724,8 @@
    <receiver>XAVIPlayerClass</receiver>
    <slot>onVideoSliderPress()</slot>
    <hints>
-    <hint type="sourcelabel">
-     <x>378</x>
-     <y>622</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>376</x>
-     <y>571</y>
-    </hint>
+    <hint type="sourcelabel"><x>0</x><y>0</y></hint>
+    <hint type="destinationlabel"><x>0</x><y>0</y></hint>
    </hints>
   </connection>
   <connection>
@@ -509,14 +734,8 @@
    <receiver>XAVIPlayerClass</receiver>
    <slot>onVideoSliderRelease()</slot>
    <hints>
-    <hint type="sourcelabel">
-     <x>414</x>
-     <y>622</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>412</x>
-     <y>544</y>
-    </hint>
+    <hint type="sourcelabel"><x>0</x><y>0</y></hint>
+    <hint type="destinationlabel"><x>0</x><y>0</y></hint>
    </hints>
   </connection>
   <connection>
@@ -525,14 +744,8 @@
    <receiver>XAVIPlayerClass</receiver>
    <slot>onBtnIncreaseClick()</slot>
    <hints>
-    <hint type="sourcelabel">
-     <x>298</x>
-     <y>655</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>305</x>
-     <y>564</y>
-    </hint>
+    <hint type="sourcelabel"><x>0</x><y>0</y></hint>
+    <hint type="destinationlabel"><x>0</x><y>0</y></hint>
    </hints>
   </connection>
   <connection>
@@ -541,14 +754,8 @@
    <receiver>XAVIPlayerClass</receiver>
    <slot>onBtnDecreaseClick()</slot>
    <hints>
-    <hint type="sourcelabel">
-     <x>354</x>
-     <y>655</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>494</x>
-     <y>536</y>
-    </hint>
+    <hint type="sourcelabel"><x>0</x><y>0</y></hint>
+    <hint type="destinationlabel"><x>0</x><y>0</y></hint>
    </hints>
   </connection>
   <connection>
@@ -557,14 +764,8 @@
    <receiver>XAVIPlayerClass</receiver>
    <slot>onBtnInc10Click()</slot>
    <hints>
-    <hint type="sourcelabel">
-     <x>410</x>
-     <y>655</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>444</x>
-     <y>488</y>
-    </hint>
+    <hint type="sourcelabel"><x>0</x><y>0</y></hint>
+    <hint type="destinationlabel"><x>0</x><y>0</y></hint>
    </hints>
   </connection>
   <connection>
@@ -573,14 +774,8 @@
    <receiver>XAVIPlayerClass</receiver>
    <slot>onBtnDec10Click()</slot>
    <hints>
-    <hint type="sourcelabel">
-     <x>466</x>
-     <y>655</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>533</x>
-     <y>513</y>
-    </hint>
+    <hint type="sourcelabel"><x>0</x><y>0</y></hint>
+    <hint type="destinationlabel"><x>0</x><y>0</y></hint>
    </hints>
   </connection>
   <connection>
@@ -589,14 +784,8 @@
    <receiver>XAVIPlayerClass</receiver>
    <slot>onBtnRateReset()</slot>
    <hints>
-    <hint type="sourcelabel">
-     <x>522</x>
-     <y>655</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>520</x>
-     <y>500</y>
-    </hint>
+    <hint type="sourcelabel"><x>0</x><y>0</y></hint>
+    <hint type="destinationlabel"><x>0</x><y>0</y></hint>
    </hints>
   </connection>
  </connections>

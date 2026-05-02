@@ -82,7 +82,7 @@ void FileCutThread::ThreadRun()
         beg_frame_seconds += (cut_beg_frame_ * 1.0) / 25;
     }
 
-    if (cut_interval_ != 0)    // ¼ôÇĞÊÓÆµ¶Î
+    if (cut_interval_ != 0)    // å‰ªåˆ‡è§†é¢‘æ®µ
     {
         if (is_pic_list_)
         {
@@ -121,7 +121,7 @@ void FileCutThread::ThreadRun()
             int exeret = Execute((ffmpegpath + avi_cmd).c_str(), true);
         }
     }
-    else    // ½ØÍ¼»ò²¨ĞÎ
+    else    // æˆªå›¾æˆ–æ³¢å½¢
     {
         bool is_take_picture = ExecMediaInfoCheckHasVideo(from_name_);
 
@@ -137,7 +137,7 @@ void FileCutThread::ThreadRun()
         }
         else
         {
-            // Êä³öÁÙÊ±wavÎÄ¼ş
+            // è¾“å‡ºä¸´æ—¶wavæ–‡ä»¶
 
             std::string wavname = to_name_ + ".wav";
 
@@ -151,11 +151,11 @@ void FileCutThread::ThreadRun()
             std::string audio_cmd = oss.str();
             int exeret = Execute((ffmpegpath + audio_cmd).c_str(), true);
 
-            // ¶ÁÈ¡wavÎÄ¼ş£¬²¢»æÍ¼±£´æ
+            // è¯»å–wavæ–‡ä»¶ï¼Œå¹¶ç»˜å›¾ä¿å­˜
             //WavPicDraw picdraw;
             //picdraw.Draw(wavname, strhelper::Ansi2Wide(to_name_));
 
-            // É¾³ıÁÙÊ±wavÎÄ¼ş
+            // åˆ é™¤ä¸´æ—¶wavæ–‡ä»¶
             std::remove(wavname.c_str());
         }
     }
@@ -324,7 +324,7 @@ int FileCutThread::Execute(const char* cmd_line, bool isWait,
     siStartInfo.cbReserved2 = 0;
     siStartInfo.lpDesktop = NULL;
     siStartInfo.dwFlags = 0;
-    siStartInfo.lpTitle = "";
+    siStartInfo.lpTitle = const_cast<LPSTR>("");
 
     if (FALSE == CreateProcessA(NULL, (LPSTR)cmd_line, NULL, NULL, 0, dwCreateflag,
         NULL, NULL, &siStartInfo, &piProcInfo) ) {

@@ -29,7 +29,7 @@ int ProcessExec(const std::wstring& commandLine, bool isWait)
     siStartInfo.cbReserved2 = 0;
     siStartInfo.lpDesktop = NULL;
     siStartInfo.dwFlags = 0;
-    siStartInfo.lpTitle = L"";
+    siStartInfo.lpTitle = const_cast<LPWSTR>(L"");
 
     if (FALSE == ::CreateProcessW(NULL, (LPWSTR)commandLine.c_str(), 
         NULL, NULL, 0, dwCreateflag,

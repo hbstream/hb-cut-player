@@ -32,7 +32,7 @@ void SimpleThread::ThreadStart()
 #else
     pthread_attr_t attributes;
     pthread_attr_init(&attributes);
-    // 默认是PTHREAD_CREATE_JOINABLE，可以调用pthread_join
+    // 榛樿鏄疨THREAD_CREATE_JOINABLE锛屽彲浠ヨ皟鐢╬thread_join
     //pthread_attr_setdetachstate(&attributes, PTHREAD_CREATE_DETACHED);
 
     pthread_create(&thread_id_, &attributes, ThreadFunc, this);
